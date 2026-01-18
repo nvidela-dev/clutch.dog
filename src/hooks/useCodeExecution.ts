@@ -12,6 +12,7 @@ interface UseCodeExecutionOptions {
 
 interface UseCodeExecutionReturn {
   execute: (code: string) => void;
+  clear: () => void;
   isRunning: boolean;
   result: ExecutionResult | null;
 }
@@ -85,5 +86,9 @@ export function useCodeExecution(
     [cleanup, timeout]
   );
 
-  return { execute, isRunning, result };
+  const clear = useCallback(() => {
+    setResult(null);
+  }, []);
+
+  return { execute, clear, isRunning, result };
 }
