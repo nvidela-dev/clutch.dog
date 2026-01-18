@@ -2,21 +2,25 @@
 
 import { useState } from "react";
 import { CodeEditor } from "@/components/CodeEditor";
+import { ConsolePanel } from "@/components/ConsolePanel";
 import { useCodeExecution } from "@/hooks/useCodeExecution";
 
 const defaultCode = `// Welcome to clutch.dog!
-// Start writing your code here
+// Try different console methods:
 
-function greet(name) {
-  return "Hello, " + name + "!";
-}
+console.log("Hello, World!");
+console.info("This is an info message");
+console.warn("This is a warning");
+console.error("This is an error");
 
-console.log(greet("World"));
+// Try running some code:
+const numbers = [1, 2, 3, 4, 5];
+console.log("Sum:", numbers.reduce((a, b) => a + b, 0));
 `;
 
 export default function EditorPage() {
   const [code, setCode] = useState(defaultCode);
-  const { execute, isRunning, result } = useCodeExecution();
+  const { execute, clear, isRunning, result } = useCodeExecution();
 
   const handleRun = () => {
     execute(code);
@@ -34,7 +38,7 @@ export default function EditorPage() {
           {isRunning ? "Running..." : "Run Code"}
         </button>
       </header>
-      <main className="flex flex-1 flex-col overflow-hidden">
+      <main className="flex flex-1 overflow-hidden">
         <div className="flex-1">
           <CodeEditor
             defaultValue={defaultCode}
@@ -42,46 +46,14 @@ export default function EditorPage() {
             onChange={(value) => setCode(value ?? "")}
           />
         </div>
-        <div className="h-48 overflow-auto border-t border-gray-800 bg-[#1e1e1e] p-4 font-mono text-sm">
-          <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-            Output
-          </div>
-          {result === null && !isRunning && (
-            <div className="text-gray-500">
-              Click &quot;Run Code&quot; to execute
-            </div>
-          )}
-          {isRunning && <div className="text-gray-400">Executing...</div>}
-          {result && (
-            <div className="space-y-1">
-              {result.logs.map((entry, i) => (
-                <div
-                  key={i}
-                  className={
-                    entry.type === "error"
-                      ? "text-red-400"
-                      : entry.type === "warn"
-                        ? "text-yellow-400"
-                        : "text-gray-300"
-                  }
-                >
-                  {entry.args
-                    .map((arg) =>
-                      typeof arg === "object"
-                        ? JSON.stringify(arg)
-                        : String(arg)
-                    )
-                    .join(" ")}
-                </div>
-              ))}
-              {result.error && (
-                <div className="text-red-400">Error: {result.error}</div>
-              )}
-              {result.success && result.logs.length === 0 && !result.error && (
-                <div className="text-gray-500">(No output)</div>
-              )}
-            </div>
-          )}
+        <div className="w-96 border-l border-gray-800">
+          <ConsolePanel
+            logs={result?.logs ?? []}
+            error={result?.error}
+            isRunning={isRunning}
+            result={result}
+            onClear={clear}
+          />
         </div>
       </main>
     </div>
