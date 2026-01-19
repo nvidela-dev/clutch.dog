@@ -1,4 +1,5 @@
 # clutch.dog
+<img width="720" height="393" alt="image" src="https://github.com/user-attachments/assets/60f3774a-98f0-414f-9366-d593bd7d2d17" />
 
 Interactive coding exercises for Express and React.
 
